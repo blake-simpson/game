@@ -21,18 +21,24 @@
     // Access context from raw dom object
     this.ctx = this.canvas[0].getContext( '2d' );
 
+    if( this.attributes.color ) {
+      this.fill();
+    }
+
     App.$( this.__super.container ).append(this.canvas);
     return this;
   };
 
+  App.Layer.prototype.fill = function() {
+    this.ctx.fillStyle = this.attributes.color;
+    this.ctx.beginPath();
+    this.ctx.rect( 0, 0, this.__super.attributes.width, this.__super.attributes.height );
+    this.ctx.closePath();
+    this.ctx.fill();
+  };
+
   App.Layer.prototype.clear = function() {
-    if( this.attributes.color ) {
-      this.ctx.fillStyle = this.attributes.color;
-      this.ctx.beginPath();
-      this.ctx.rect( 0, 0, this.__super.attributes.width, this.__super.attributes.height );
-      this.ctx.closePath();
-      this.ctx.fill();
-    } else {
+    if( !this.attributes.color ) {
       this.ctx.clearRect( 0, 0, this.__super.attributes.width, this.__super.attributes.width );
     }
 
