@@ -1,0 +1,17 @@
+body {
+  font: 16px Verdana, sans-serif;
+}
+
+.canvas-container {
+  width: 640px;
+  height: 480px;
+  margin: 40px auto 0;
+  position: relative;
+  box-shadow: 0 0 10px rgba(100,100,100,0.3);
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
