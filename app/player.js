@@ -53,7 +53,7 @@
     // Points = max size of debry minus it's size times by point multiplyer.
     // The smaller the debry, the higher the points.
     // example:
-    // max_size (10) - size (3) = 3  * multiplier (10) = 70
+    // max_size (10) - size (3) = 7  * multiplier (10) = 70
     // max_size (10) - size (8) = 2  * multiplier (10) = 20
     var calculated = (debris.attributes.max_size - debris.attributes.width) * this.__super.attributes.point_multiplier;
 
