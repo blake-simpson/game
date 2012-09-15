@@ -26,15 +26,21 @@
 
     this.container = document.getElementById( this.attributes.canvas_container_id );
 
-    this.layers = {
-      base: new App.Layer( this, 'base', { color: this.attributes.color } ),
-      player: new App.Layer( this, 'players' ),
-      bullets: new App.Layer( this, 'bullets' ),
-      debris: new App.Layer( this, 'debris' ),
-      ui: new App.Layer( this, 'ui' )
-    };
+    this.layer = new App.BaseLayer( this, 'base', {
+      color: '#f7f7f7',
+      cloud_color: 'rgba(255,255,255,0.5)',
+      cloud_stroke: 'rgba(255,255,255,0.7)',
+      clouds: 4,
+      min_size: 100,
+      max_size: 200,
+      speed: 4
+    } );
 
-    this.layer = this.layers.base;
+    this.layers = {
+      common: new App.Layer( this, 'common' ),
+      debris: new App.Layer( this, 'debris' ),
+      ui: new App.Layer( this, 'ui', {static: true} )
+    };
 
     this.bullets = [];
     this.debris = [];
@@ -94,6 +100,7 @@
     var frame;
 
     this.clearLayers();
+    this.layer.animate();
 
     // Handle direction controls
     if ( this.activeKeys.left ) {
@@ -139,7 +146,7 @@
 
   App.Game.prototype.clearLayers = function() {
     _.each( this.layers, function( layer ) {
-      layer.clear();
+       layer.clear();
     }, this );
   };
 

@@ -2,6 +2,12 @@ body {
   font: 16px Verdana, sans-serif;
 }
 
+.buttons {
+  display: block;
+  text-align: center;
+  margin: 30px 0 0;
+}
+
 .canvas-container {
   width: 640px;
   height: 480px;

@@ -1,4 +1,5 @@
-(function (){
+(function() {
+
   App.Bullet = function( owner, attributes ) {
     if ( !attributes || attributes === undefined ) {
       attributes = {};
@@ -6,7 +7,7 @@
 
     this.__super = owner;
     this.__game = this.__super.__super;
-    this.layer = this.__game.layers.bullets;
+    this.layer = this.__game.layers.common;
 
     this.active = true;
 
@@ -22,9 +23,11 @@
     this.attributes = _.defaults( attributes, defaults );
 
     // Set default bullet position relative to parent player
-    this.attributes.x = Math.round( this.__super.attributes.x + (this.__super.attributes.width / 2) );
+    this.attributes.x = ( this.__super.attributes.x + (this.__super.attributes.width / 2) ) << 0;
     this.attributes.y = this.__super.attributes.y;
   };
+
+  App.Bullet.prototype = new App.CanvasObject();
 
   App.Bullet.prototype.destroy = function() {
     this.active = false;
@@ -35,12 +38,4 @@
     return this;
   };
 
-  App.Bullet.prototype.draw = function() {
-    if( !this.active ) { return false; }
-
-    var attrs = this.attributes;
-
-    this.layer.ctx.fillStyle = attrs.color;
-    this.layer.ctx.fillRect( attrs.x, attrs.y, attrs.width, attrs.height );
-  };
 }());

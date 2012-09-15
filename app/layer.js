@@ -1,14 +1,15 @@
 (function (){
+
+  //
+  // @ Class: Layer
+  //
+
   App.Layer = function( owner, name, attributes ) {
     if( !attributes || typeof attributes === undefined ) {
       attributes = {};
     }
 
-    var defaults = {
-      color: false
-    };
-
-    this.attributes = _.defaults( attributes, defaults );
+    this.attributes = _.defaults( attributes, this.defaults );
 
     this.__super = owner;
     this.name = name;
@@ -26,7 +27,16 @@
     }
 
     App.$( this.__super.container ).append(this.canvas);
+
+    if( this.name == 'base' ) {
+      this.createClouds();
+    }
+
     return this;
+  };
+
+  App.Layer.prototype.defaults = {
+    color: false
   };
 
   App.Layer.prototype.fill = function() {
@@ -38,9 +48,91 @@
   };
 
   App.Layer.prototype.clear = function() {
-    if( !this.attributes.color ) {
+    if( !this.attributes.static ) {
       this.ctx.clearRect( 0, 0, this.__super.attributes.width, this.__super.attributes.width );
     }
-
   };
+
+  //
+  // @ Class: Base Cloud
+  //
+
+  App.BaseCloud = function( owner ) {
+    this.__super = owner;
+    this.__game = this.__super.__super;
+
+    this.attributes = {
+      x: 0,
+      y: 0,
+      size: 10
+    };
+
+    // Choose colour
+    this.attributes.color = this.__super.attributes.cloud_color;
+    this.attributes.stroke = this.__super.attributes.cloud_stroke;
+
+    this.generateAttributes();
+    return this;
+  };
+
+  App.BaseCloud.prototype.generateAttributes = function() {
+    // Choose a cloud size
+    this.attributes.size = App.Helpers.random( this.__super.attributes.min_size, this.__super.attributes.max_size );
+
+    // Choose a random start point
+    this.attributes.x = ( Math.random() * this.__game.attributes.width ) << 0;
+    this.attributes.y = ( -( Math.random() * this.__game.attributes.height ) - this.attributes.size ) << 0;
+  };
+
+  App.BaseCloud.prototype.move = function() {
+    if( this.attributes.y > this.__game.attributes.height ) {
+      this.generateAttributes();
+    } else {
+      this.attributes.y += this.__super.attributes.speed;
+    }
+    return this;
+  };
+
+  App.BaseCloud.prototype.draw = function() {
+    var size = this.attributes.size,
+      color = this.attributes.color,
+      x = this.attributes.x,
+      y = this.attributes.y,
+      angle = 2 * Math.PI;
+
+    this.__super.ctx.beginPath();
+    this.__super.ctx.arc( x, y, size, 0, angle, false );
+    //this.__super.ctx.rect( x, y, size, size );
+    this.__super.ctx.lineWidth = 2;
+    this.__super.ctx.strokeStyle = this.attributes.stroke;
+    this.__super.ctx.stroke();
+    this.__super.ctx.fillStyle = color;
+    this.__super.ctx.fill();
+    this.__super.ctx.closePath();
+  };
+
+  //
+  // @ Class: Base Layer
+  //
+
+  App.BaseLayer = App.Layer;
+
+  App.BaseLayer.prototype.createClouds = function() {
+    this.clouds = [];
+
+    for( var i = 0; i < this.attributes.clouds; i++ ) {
+      var cloud = new App.BaseCloud( this );
+
+      this.clouds.push( cloud );
+    }
+  };
+
+  App.BaseLayer.prototype.animate = function() {
+    this.fill();
+
+    _.each( this.clouds, function( cloud ){
+      cloud.move().draw();
+    }, this );
+  };
+
 }() );

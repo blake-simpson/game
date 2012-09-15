@@ -21,8 +21,10 @@
     this.generateAttributes();
   };
 
+  App.Debris.prototype = new App.CanvasObject();
+
   App.Debris.prototype.generateAttributes = function() {
-    this.attributes.x = ( Math.random() * this.__super.attributes.width );
+    this.attributes.x = ( Math.random() * this.__super.attributes.width ) << 0;
     this.attributes.y = this._calculateTopOffset();
     this._calculateSize();
     this.active = true;
@@ -44,17 +46,8 @@
     return this;
   };
 
-  App.Debris.prototype.draw = function() {
-    if( !this.active ) { return false; }
-
-    var attrs = this.attributes;
-
-    this.layer.ctx.fillStyle = attrs.color;
-    this.layer.ctx.fillRect( attrs.x, attrs.y, attrs.width, attrs.height );
-  };
-
   App.Debris.prototype._calculateTopOffset = function() {
-    return Math.round( ~( Math.random() * this.__super.attributes.height ) );
+    return -( Math.random() * this.__super.attributes.height ) << 0;
   };
 
   App.Debris.prototype._calculateSize = function() {

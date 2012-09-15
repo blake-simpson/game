@@ -22,6 +22,19 @@
               window.setTimeout(callback, 1000 / 60);
           }
       );
+    },
+
+    verifyAttributes: function( attributes ) {
+      if( !attributes || typeof attributes === undefined ) {
+        return {};
+      }
+
+      return attributes;
+    },
+
+    random: function( min, max ) {
+      return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
     }
+
   };
 }() );

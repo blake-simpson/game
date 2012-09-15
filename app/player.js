@@ -1,17 +1,18 @@
 (function (){
+
   App.Player = function( owner, attributes ) {
     if ( !attributes || attributes === undefined) {
       attributes = {};
     }
 
     this.__super = owner;
-    this.layer = this.__super.layers.player;
+    this.layer = this.__super.layers.common;
+
+    this.active = true;
 
     // Define custom Player properties
     var defaults = {
       name: 'Unknown player',
-      x: 0,
-      y: 0,
       points: 0,
       width: 20,
       height: 30,
@@ -23,7 +24,8 @@
 
 
     // player positioned at bottom of canvas
-    this.attributes.y = (this.__super.attributes.height - this.attributes.height);
+    this.attributes.y = ( this.__super.attributes.height - this.attributes.height );
+    this.attributes.x = ( this.__super.attributes.width / 2 ) - ( this.attributes.width / 2 );
 
     // Predefined attributes
     this.attributes.points = 0;
@@ -31,23 +33,7 @@
     this.attributes.damage = 0;
   };
 
-  App.Player.prototype.move = function( direction ) {
-    var newPos = 0;
-
-    if ( !direction ) { return false; }
-
-    switch( direction )
-    {
-    case 'left':
-      newPos = this.attributes.x - this.attributes.speed;
-      break;
-    case 'right':
-      newPos = this.attributes.x + this.attributes.speed;
-      break;
-    }
-
-    this.updatePosition( newPos, this.attributes.y );
-  };
+  App.Player.prototype = new App.CanvasObject();
 
   App.Player.prototype.confirmKill = function( debris ) {
     // Points = max size of debry minus it's size times by point multiplyer.
@@ -112,13 +98,6 @@
     if ( (y - speed) < ( game.height - height ) && (y + speed) > 0 ) {
       this.attributes.y = y;
     }
-  };
-
-  App.Player.prototype.draw = function() {
-    var attrs = this.attributes;
-
-    this.layer.ctx.fillStyle = attrs.color;
-    this.layer.ctx.fillRect( attrs.x, attrs.y, attrs.width, attrs.height );
   };
 
   App.Player.prototype._calculateDamage = function() {

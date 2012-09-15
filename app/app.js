@@ -1,7 +1,9 @@
-window.onload = function(){
+$(function(){
   var game = new App.Game({
     canvas_container_id: 'game'
   });
+
+  $('#stop').click(game.stop);
 
   window.game = game;
 
@@ -12,4 +14,4 @@ window.onload = function(){
   game.start();
 
   console.log('game', game);
-};
+});
