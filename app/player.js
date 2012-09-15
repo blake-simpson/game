@@ -24,8 +24,8 @@
 
 
     // player positioned at bottom of canvas
-    this.attributes.y = ( this.__super.attributes.height - this.attributes.height );
-    this.attributes.x = ( this.__super.attributes.width / 2 ) - ( this.attributes.width / 2 );
+    this.attributes.y = this.__super.attributes.height - this.attributes.height;
+    this.attributes.x = ( this.__super.attributes.width / 2 ) - ( this.attributes.width / 2 ) << 0;
 
     // Predefined attributes
     this.attributes.points = 0;
@@ -71,13 +71,13 @@
     this.firing = false;
   };
 
-  App.Player.prototype.left = function() {
-    var newPos = this.attributes.x - this.attributes.speed;
+  App.Player.prototype.left = function( delta ) {
+    var newPos = this.attributes.x - ( this.attributes.speed + delta );
     this.updatePosition( newPos, this.attributes.y );
   };
 
-  App.Player.prototype.right = function() {
-    var newPos = this.attributes.x + this.attributes.speed;
+  App.Player.prototype.right = function( delta ) {
+    var newPos = this.attributes.x + ( this.attributes.speed + delta );
     this.updatePosition( newPos, this.attributes.y );
   };
 

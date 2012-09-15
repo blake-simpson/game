@@ -84,11 +84,11 @@
     this.attributes.y = ( -( Math.random() * this.__game.attributes.height ) - this.attributes.size ) << 0;
   };
 
-  App.BaseCloud.prototype.move = function() {
+  App.BaseCloud.prototype.move = function( delta ) {
     if( this.attributes.y > this.__game.attributes.height ) {
       this.generateAttributes();
     } else {
-      this.attributes.y += this.__super.attributes.speed;
+      this.attributes.y += (this.__super.attributes.speed + delta);
     }
     return this;
   };
@@ -127,11 +127,11 @@
     }
   };
 
-  App.BaseLayer.prototype.animate = function() {
+  App.BaseLayer.prototype.animate = function( delta ) {
     this.fill();
 
     _.each( this.clouds, function( cloud ){
-      cloud.move().draw();
+      cloud.move( delta ).draw();
     }, this );
   };
 

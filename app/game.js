@@ -41,11 +41,21 @@
       debris: new App.Layer( this, 'debris' ),
       ui: new App.Layer( this, 'ui', {static: true} )
     };
+  };
 
+  App.Game.prototype.setup = function() {
     this.bullets = [];
     this.debris = [];
     this.activeKeys = [];
     this.direction = false;
+    this.active = true;
+    this.delta = new Date();
+
+    if ( this.player ) {
+      this.player.attributes.points = 0;
+      this.player.attributes.damage = 0;
+      this.player.attributes.hits = 0;
+    }
 
     this.UI = new App.UI( this );
     this.addDebris();
@@ -85,11 +95,12 @@
   };
 
   App.Game.prototype.start = function() {
+    this.setup();
     this.loop();
   };
 
   App.Game.prototype.stop = function() {
-    App.Helpers.requestAnimFrame = function() { return false; };
+    this.active = false;
   };
 
   App.Game.prototype.updateUI = function() {
@@ -97,16 +108,20 @@
   };
 
   App.Game.prototype.loop = function() {
-    var frame;
+    var frame,
+      date = new Date(),
+      delta = (date - this.delta) / 60;
+
+    this.delta = date;
 
     this.clearLayers();
-    this.layer.animate();
+    this.layer.animate( delta );
 
     // Handle direction controls
     if ( this.activeKeys.left ) {
-      this.player.left();
+      this.player.left( delta );
     } else if ( this.activeKeys.right ) {
-      this.player.right();
+      this.player.right( delta );
     }
 
     // Handle bullets
@@ -119,12 +134,12 @@
 
     // Draw all bullets to the canvas
     _.each(this.bullets, function( bullet ) {
-      bullet.move().draw();
+      bullet.move( delta ).draw();
     });
 
     // Draw all debris to the canvas
     _.each(this.debris, function( debris ) {
-      debris.move().draw();
+      debris.move( delta ).draw();
     });
 
     this.detectCollisions();
@@ -134,7 +149,7 @@
     // Ask browser to detect next frame and recurse
     // or fallback to setTimeout.
     // requestAnimFrame() helper will return false when game is stopped.
-    if (App.Helpers.requestAnimFrame()) {
+    if( this.active ) {
       try {
         frame = App.Helpers.requestAnimFrame();
         frame( _.bind(this.loop, this) );

@@ -36,11 +36,11 @@
     this.generateAttributes();
   };
 
-  App.Debris.prototype.move = function() {
+  App.Debris.prototype.move = function( delta ) {
     if ( this.attributes.y > this.__super.attributes.height ) {
       this.attributes.y = this._calculateTopOffset();
     } else {
-      this.attributes.y += this.attributes.speed;
+      this.attributes.y += (this.attributes.speed + delta);
     }
 
     return this;
