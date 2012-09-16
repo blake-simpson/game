@@ -33,8 +33,8 @@
     this.active = false;
   };
 
-  App.Bullet.prototype.move = function( delta ) {
-    this.attributes.y -= (this.attributes.speed + delta);
+  App.Bullet.prototype.move = function() {
+    this.attributes.y -= this.attributes.speed;
     return this;
   };
 

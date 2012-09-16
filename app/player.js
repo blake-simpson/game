@@ -72,13 +72,13 @@
     this.firing = false;
   };
 
-  App.Player.prototype.left = function( delta ) {
-    var newPos = this.attributes.x - ( this.attributes.speed + delta );
+  App.Player.prototype.left = function() {
+    var newPos = this.attributes.x - this.attributes.speed;
     this.updatePosition( newPos, this.attributes.y );
   };
 
-  App.Player.prototype.right = function( delta ) {
-    var newPos = this.attributes.x + ( this.attributes.speed + delta );
+  App.Player.prototype.right = function() {
+    var newPos = this.attributes.x + this.attributes.speed;
     this.updatePosition( newPos, this.attributes.y );
   };
 

@@ -2,6 +2,32 @@ body {
   font: 16px Verdana, sans-serif;
 }
 
+.status {
+  width: 640px;
+  margin: 20px auto;
+}
+
+.status .point-container {
+  float: left;
+  width: 200px;
+}
+
+.status .damage-container {
+  float: right;
+  width: 200px;
+  text-align: right;
+}
+
+.status .powerups-container {
+  float: left;
+  width: 240px;
+  text-align: center;
+}
+
+.clear {
+  clear: both;
+}
+
 .buttons {
   display: block;
   text-align: center;
@@ -11,7 +37,7 @@ body {
 .canvas-container {
   width: 640px;
   height: 480px;
-  margin: 40px auto 0;
+  margin: 0 auto;
   position: relative;
   box-shadow: 0 0 10px rgba(100,100,100,0.3);
 }

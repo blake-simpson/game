@@ -10,6 +10,7 @@
     this.layer = this.__game.layers.common;
 
     var defaults = {
+      human_name: this.name,
       color: '#0f0',
       width: 20,
       height: 20,
@@ -35,8 +36,8 @@
     this.active = false;
   };
 
-  App.Powerup.prototype.move = function( delta ) {
-    this.attributes.x += ( this.attributes.speed + delta );
+  App.Powerup.prototype.move = function() {
+    this.attributes.x += this.attributes.speed;
     return this;
   };
 

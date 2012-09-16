@@ -5,8 +5,8 @@
     this.__super = owner;
 
     this.availablePowerups = [
-      new App.Powerup( this, 'rapidfire', {color: '#0f0'} ),
-      new App.Powerup( this, 'half_speed', {color: '#123456', duration: 8000} ),
+      new App.Powerup( this, 'rapidfire', {color: '#0f0', human_name: 'Rapidfire'} ),
+      new App.Powerup( this, 'half_speed', {color: '#123456', duration: 8000, human_name: 'Slowmo'} ),
     ];
 
     this.active = {};
@@ -53,6 +53,7 @@
     this.clock = setTimeout( _.bind( function() {
       delete this.active[ name ];
       this.providePowerups();
+      this.__super.UI.clearPowerup();
     }, this ), duration );
   };
 

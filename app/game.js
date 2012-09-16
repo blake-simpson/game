@@ -51,7 +51,6 @@
     this.activeKeys = [];
     this.direction = false;
     this.active = true;
-    this.delta = new Date();
 
     if ( this.player ) {
       this.player.attributes.points = 0;
@@ -112,26 +111,21 @@
   };
 
   App.Game.prototype.loop = function() {
-    var frame,
-      date = new Date(),
-      delta = (date - this.delta) / 60;
-
-    this.delta = date;
+    var frame;
 
     this.clearLayers();
-    this.detectBulletsOutOfBounds();
 
     this.detectCollisions();
     this.updateUI();
 
-    this.layer.animate( delta );
+    //this.layer.animate();
 
 
     // Handle direction controls
     if ( this.activeKeys.left ) {
-      this.player.left( delta );
+      this.player.left();
     } else if ( this.activeKeys.right ) {
-      this.player.right( delta );
+      this.player.right();
     }
 
     // Handle bullets
@@ -143,18 +137,13 @@
     this.player.draw();
 
     // Draw all bullets to the canvas
-    _.each( this.bullets, function( bullet ) {
-      bullet.draw().move( delta );
-    } );
-
-    // Draw all debris to the canvas
-    _.each( this.debris, function( debris ) {
-      debris.draw().move( delta );
-    } );
-
-    _.each( this.powerups, function( powerup ) {
-      powerup.draw().move( delta );
-    } );
+    _.each( this.bullets, function( bullet, index ) {
+      if( (bullet.attributes.y + bullet.attributes.height) < 0 || !bullet.active ) {
+        this.cleanBullet( index );
+      } else {
+        bullet.draw().move();
+      }
+    }, this );
 
     // Ask browser to detect next frame and recurse
     // or fallback to setTimeout.
@@ -163,9 +152,7 @@
       try {
         frame = App.Helpers.requestAnimFrame();
         frame( _.bind(this.loop, this) );
-      } catch( e ) {
-        throw e;
-      }
+      } catch( e ) {}
     }
   };
 
@@ -185,17 +172,9 @@
     this.powerups.splice( index, 1 );
   };
 
-  App.Game.prototype.detectBulletsOutOfBounds = function() {
-    _.each( this.bullets, function( bullet, index ) {
-      if( (bullet.attributes.y + bullet.attributes.height) < 0 || !bullet.active ) {
-        this.cleanBullet( index );
-      }
-    }, this );
-  };
-
   App.Game.prototype.detectCollisions = function() {
-    setTimeout( _.bind( this.debrisCollisions, this ), 0 );
-    setTimeout( _.bind( this.powerupCollisions, this ), 0 );
+    this.debrisCollisions();
+    this.powerupCollisions();
   };
 
   App.Game.prototype.debrisCollisions = function() {
@@ -213,6 +192,8 @@
       if( App.Helpers.collision( debris, this.player ) ) {
         this.player.hit();
         debris.destroy();
+      } else {
+        debris.draw().move();
       }
     }, this );
 
@@ -229,7 +210,9 @@
       }, this );
 
       if ( (powerup.attributes.x - powerup.attributes.width) > this.attributes.width || !powerup.active ) {
-        this.cleanPowerup( index )
+        this.cleanPowerup( index );
+      } else {
+        powerup.draw().move();
       }
     }, this );
 

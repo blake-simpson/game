@@ -86,11 +86,11 @@
     this.attributes.y = ( -( Math.random() * this.__game.attributes.height ) - this.attributes.size ) << 0;
   };
 
-  App.BaseCloud.prototype.move = function( delta ) {
+  App.BaseCloud.prototype.move = function() {
     if( this.attributes.y > this.__game.attributes.height ) {
       this.generateAttributes();
     } else {
-      this.attributes.y += (this.__super.attributes.speed + delta);
+      this.attributes.y += this.__super.attributes.speed;
     }
     return this;
   };
@@ -128,11 +128,11 @@
     }
   };
 
-  App.BaseLayer.prototype.animate = function( delta ) {
+  App.BaseLayer.prototype.animate = function() {
     this.fill();
 
     _.each( this.clouds, function( cloud ){
-      cloud.move( delta ).draw();
+      cloud.move().draw();
     }, this );
   };
 
