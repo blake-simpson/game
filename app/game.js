@@ -9,9 +9,7 @@
   App.$ = root.jQuery || root.zepto || false;
 
   App.Game = function( attributes ) {
-    if ( !attributes || attributes === undefined ) {
-      attributes = {};
-    }
+    attributes = App.Helpers.verifyAttributes( attributes );
 
     var defaults = {
       canvas_container_id: 'game',
@@ -216,38 +214,42 @@
   };
 
   App.Game.prototype.detectCollisions = function() {
-    _.each( this.bullets, function( bullet, index ) {
 
-      _.each( this.debris, function( debris ) {
-
+    _.each( this.debris, function( debris ) {
+      _.each( this.bullets, function( bullet ) {
         if( App.Helpers.collision( bullet, debris ) ) {
           bullet.destroy();
           debris.destroy();
           this.player.confirmKill( debris );
-
-        } else if( App.Helpers.collision( debris, this.player ) ) {
-          this.player.hit();
-          debris.destroy();
         }
-
       }, this );
 
-      _.each( this.powerups, function( powerup, powerupIndex ) {
 
+      if( App.Helpers.collision( debris, this.player ) ) {
+        this.player.hit();
+        debris.destroy();
+      }
+    }, this );
+
+    _.each( this.powerups, function( powerup, index ) {
+      _.each( this.bullets, function( bullet ) {
         if ( App.Helpers.collision( powerup, bullet ) ) {
           powerup.hit();
           bullet.destroy();
-        } else if ( (powerup.attributes.x - powerup.attributes.width) > this.attributes.width || !powerup.active ) {
-          this.cleanPowerup( powerupIndex )
         }
-
       }, this );
 
+      if ( (powerup.attributes.x - powerup.attributes.width) > this.attributes.width || !powerup.active ) {
+        this.cleanPowerup( index )
+      }
+    }, this );
+
+    _.each( this.bullet, function( bullet, index ) {
       if( (bullet.attributes.y + bullet.attributes.height) < 0 || !bullet.active ) {
         this.cleanBullet( index );
       }
-
     }, this );
+
   };
 
 }());
