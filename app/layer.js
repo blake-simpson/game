@@ -75,6 +75,8 @@
     return this;
   };
 
+  App.BaseCloud.prototype.angle = 2 * Math.PI;
+
   App.BaseCloud.prototype.generateAttributes = function() {
     // Choose a cloud size
     this.attributes.size = App.Helpers.random( this.__super.attributes.min_size, this.__super.attributes.max_size );
@@ -97,11 +99,10 @@
     var size = this.attributes.size,
       color = this.attributes.color,
       x = this.attributes.x,
-      y = this.attributes.y,
-      angle = 2 * Math.PI;
+      y = this.attributes.y;
 
     this.__super.ctx.beginPath();
-    this.__super.ctx.arc( x, y, size, 0, angle, false );
+    this.__super.ctx.arc( x, y, size, 0, this.angle, false );
     //this.__super.ctx.rect( x, y, size, size );
     this.__super.ctx.lineWidth = 2;
     this.__super.ctx.strokeStyle = this.attributes.stroke;

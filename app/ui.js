@@ -38,9 +38,32 @@
     return this;
   };
 
+  App.UI.prototype.drawPowerups = function() {
+    var manager = this.__super.PowerupManager
+      size = this.attributes.height - 10,
+      originalOffset = ( this.__super.attributes.width / 2 - ( size / 2) ) << 0,
+      i = 1;
+
+
+    _.each( manager.active, function( val, name ) {
+      var powerup = _.find( manager.availablePowerups, function( p ) { return p.name == name; } ),
+        offset = originalOffset + ( size * i );
+
+      //console.log( originalOffset, offset );
+
+      this.layer.ctx.beginPath();
+      this.layer.ctx.fillStyle = powerup.attributes.color;
+      this.layer.ctx.rect( offset, 5, size, size );
+      this.layer.ctx.fill();
+      this.layer.ctx.closePath();
+      i++;
+    }, this );
+  };
+
   App.UI.prototype.update = function() {
     this.drawBar();
     this.drawPoints();
     this.drawHits();
+    this.drawPowerups();
   };
 }() );
