@@ -19,7 +19,8 @@
       width: 640,
       height: 480,
       total_debris: 20,
-      point_multiplier: 10
+      point_multiplier: 10,
+      powerup_delay: 5000
     };
 
     this.attributes = _.defaults( attributes, defaults );
@@ -41,12 +42,19 @@
       debris: new App.Layer( this, 'debris' ),
       ui: new App.Layer( this, 'ui', {static: true} )
     };
+
+    this.availablePowerups = [
+      {name: 'rapidfire', options: {color: '#0f0'}},
+      {name: 'half_speed', options: {color: '#123456'}}
+    ];
   };
 
   App.Game.prototype.setup = function() {
     this.bullets = [];
     this.debris = [];
+    this.powerups = [];
     this.activeKeys = [];
+    this.activePowerups = {};
     this.direction = false;
     this.active = true;
     this.delta = new Date();
@@ -97,14 +105,42 @@
   App.Game.prototype.start = function() {
     this.setup();
     this.loop();
+    this.providePowerups();
   };
 
   App.Game.prototype.stop = function() {
     this.active = false;
+    clearInterval( this.powerupManager );
   };
 
   App.Game.prototype.updateUI = function() {
     this.UI.update();
+  };
+
+  App.Game.prototype.providePowerups = function() {
+    this.powerupManager = setInterval( _.bind( this.addPowerup, this ), this.attributes.powerup_delay );
+  };
+
+  App.Game.prototype.addPowerup = function() {
+    var selected = this.choosePowerup();
+      powerup = new App.Powerup( this, selected.name, selected.options );
+
+    this.powerups.push( powerup );
+  };
+
+  App.Game.prototype.choosePowerup = function() {
+    var total = this.availablePowerups.length,
+      index = ( Math.random() * total ) << 0;
+
+    return this.availablePowerups[ index ] || false;
+  };
+
+  App.Game.prototype.clearPowerup = function( name, duration ) {
+    clearInterval( this.powerupManager );
+    setTimeout( _.bind( function() {
+      delete this.activePowerups[ name ];
+      this.providePowerups();
+    }, this ), duration );
   };
 
   App.Game.prototype.loop = function() {
@@ -133,14 +169,18 @@
     this.player.draw();
 
     // Draw all bullets to the canvas
-    _.each(this.bullets, function( bullet ) {
+    _.each( this.bullets, function( bullet ) {
       bullet.move( delta ).draw();
-    });
+    } );
 
     // Draw all debris to the canvas
-    _.each(this.debris, function( debris ) {
+    _.each( this.debris, function( debris ) {
       debris.move( delta ).draw();
-    });
+    } );
+
+    _.each( this.powerups, function( powerup ) {
+      powerup.move( delta ).draw();
+    } );
 
     this.detectCollisions();
 
@@ -171,24 +211,40 @@
     this.bullets.splice( index, 1 );
   };
 
-  App.Game.prototype.detectCollisions = function() {
-    _.each( this.debris, function( debris ) {
+  App.Game.prototype.cleanPowerup = function( index ) {
+    this.powerups.splice( index, 1 );
+  };
 
-      _.each( this.bullets, function( bullet, index ) {
+  App.Game.prototype.detectCollisions = function() {
+    _.each( this.bullets, function( bullet, index ) {
+
+      _.each( this.debris, function( debris ) {
 
         if( App.Helpers.collision( bullet, debris ) ) {
           bullet.destroy();
           debris.destroy();
           this.player.confirmKill( debris );
-        } else if( (bullet.attributes.y + bullet.attributes.height) < 0 || !bullet.active ) {
-          this.cleanBullet( index );
+
+        } else if( App.Helpers.collision( debris, this.player ) ) {
+          this.player.hit();
+          debris.destroy();
         }
 
       }, this );
 
-      if( App.Helpers.collision( debris, this.player ) ) {
-        this.player.hit();
-        debris.destroy();
+      _.each( this.powerups, function( powerup, powerupIndex ) {
+
+        if ( App.Helpers.collision( powerup, bullet ) ) {
+          powerup.hit();
+          bullet.destroy();
+        } else if ( (powerup.attributes.x - powerup.attributes.width) > this.attributes.width || !powerup.active ) {
+          this.cleanPowerup( powerupIndex )
+        }
+
+      }, this );
+
+      if( (bullet.attributes.y + bullet.attributes.height) < 0 || !bullet.active ) {
+        this.cleanBullet( index );
       }
 
     }, this );

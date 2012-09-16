@@ -58,13 +58,14 @@
   App.Player.prototype.fire = function() {
     if (this.firing) { return false; }
 
-    var bullet = new App.Bullet( this );
+    var bullet = new App.Bullet( this ),
+      delay = this.__super.activePowerups['rapidfire'] ? 65 : 130;
 
     this.firing = true;
     this.__super.bullets.push( bullet );
 
     // Delay firing for a few miliseconds to stop bullet spam
-    setTimeout( _.bind(this.fireComplete, this), 130 );
+    setTimeout( _.bind(this.fireComplete, this), delay );
   };
 
   App.Player.prototype.fireComplete = function() {

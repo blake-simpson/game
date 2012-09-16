@@ -37,10 +37,13 @@
   };
 
   App.Debris.prototype.move = function( delta ) {
+    var speed = this.attributes.speed;
+
     if ( this.attributes.y > this.__super.attributes.height ) {
       this.attributes.y = this._calculateTopOffset();
     } else {
-      this.attributes.y += (this.attributes.speed + delta);
+      speed = this.__super.activePowerups['half_speed'] ? ~~(speed / 2) : speed;
+      this.attributes.y += (speed + delta);
     }
 
     return this;

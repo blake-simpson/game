@@ -3,7 +3,9 @@ $(function(){
     canvas_container_id: 'game'
   });
 
-  $('#stop').click(game.stop);
+  $('#stop').click(function() {
+    game.stop()
+  });
 
   window.game = game;
 
