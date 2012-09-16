@@ -40,6 +40,8 @@
       debris: new App.Layer( this, 'debris' ),
       ui: new App.Layer( this, 'ui', {static: true} )
     };
+
+    this.applyControls();
   };
 
   App.Game.prototype.setup = function() {
@@ -61,7 +63,6 @@
     this.PowerupManager = new App.PowerupManager( this );
 
     this.addDebris();
-    this.applyControls();
   };
 
   App.Game.prototype.applyControls = function() {
@@ -118,6 +119,7 @@
     this.delta = date;
 
     this.clearLayers();
+    this.detectBulletsOutOfBounds();
 
     this.detectCollisions();
     this.updateUI();
@@ -183,7 +185,22 @@
     this.powerups.splice( index, 1 );
   };
 
+  App.Game.prototype.detectBulletsOutOfBounds = function() {
+    _.each( this.bullets, function( bullet, index ) {
+      if( (bullet.attributes.y + bullet.attributes.height) < 0 || !bullet.active ) {
+        this.cleanBullet( index );
+      }
+    }, this );
+  };
+
   App.Game.prototype.detectCollisions = function() {
+
+    setTimeout( _.bind( this.debrisCollisions, this ), 0 );
+    setTimeout( _.bind( this.powerupCollisions, this ), 0 );
+
+  };
+
+  App.Game.prototype.debrisCollisions = function() {
 
     _.each( this.debris, function( debris ) {
       _.each( this.bullets, function( bullet ) {
@@ -201,6 +218,10 @@
       }
     }, this );
 
+  };
+
+  App.Game.prototype.powerupCollisions = function() {
+
     _.each( this.powerups, function( powerup, index ) {
       _.each( this.bullets, function( bullet ) {
         if ( App.Helpers.collision( powerup, bullet ) ) {
@@ -211,12 +232,6 @@
 
       if ( (powerup.attributes.x - powerup.attributes.width) > this.attributes.width || !powerup.active ) {
         this.cleanPowerup( index )
-      }
-    }, this );
-
-    _.each( this.bullet, function( bullet, index ) {
-      if( (bullet.attributes.y + bullet.attributes.height) < 0 || !bullet.active ) {
-        this.cleanBullet( index );
       }
     }, this );
 
