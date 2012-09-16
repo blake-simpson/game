@@ -194,10 +194,8 @@
   };
 
   App.Game.prototype.detectCollisions = function() {
-
     setTimeout( _.bind( this.debrisCollisions, this ), 0 );
     setTimeout( _.bind( this.powerupCollisions, this ), 0 );
-
   };
 
   App.Game.prototype.debrisCollisions = function() {
