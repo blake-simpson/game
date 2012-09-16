@@ -18,7 +18,7 @@
       height: 480,
       total_debris: 20,
       point_multiplier: 10,
-      powerup_delay: 5000
+      powerup_delay: 8000
     };
 
     this.attributes = _.defaults( attributes, defaults );
@@ -118,7 +118,12 @@
     this.delta = date;
 
     this.clearLayers();
+
+    this.detectCollisions();
+    this.updateUI();
+
     this.layer.animate( delta );
+
 
     // Handle direction controls
     if ( this.activeKeys.left ) {
@@ -137,21 +142,17 @@
 
     // Draw all bullets to the canvas
     _.each( this.bullets, function( bullet ) {
-      bullet.move( delta ).draw();
+      bullet.draw().move( delta );
     } );
 
     // Draw all debris to the canvas
     _.each( this.debris, function( debris ) {
-      debris.move( delta ).draw();
+      debris.draw().move( delta );
     } );
 
     _.each( this.powerups, function( powerup ) {
-      powerup.move( delta ).draw();
+      powerup.draw().move( delta );
     } );
-
-    this.detectCollisions();
-
-    this.updateUI();
 
     // Ask browser to detect next frame and recurse
     // or fallback to setTimeout.

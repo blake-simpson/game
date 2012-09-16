@@ -5,8 +5,8 @@
     this.__super = owner;
 
     this.availablePowerups = [
-      {name: 'rapidfire', options: {color: '#0f0'}},
-      {name: 'half_speed', options: {color: '#123456', duration: 8000}}
+      new App.Powerup( this, 'rapidfire', {color: '#0f0'} ),
+      new App.Powerup( this, 'half_speed', {color: '#123456', duration: 8000} ),
     ];
 
     this.active = {};
@@ -22,8 +22,7 @@
   };
 
   App.PowerupManager.prototype.add = function() {
-    var selected = this.choose(),
-      powerup = new App.Powerup( this, selected.name, selected.options );
+    var powerup = this.choose().reset();
 
     this.__super.powerups.push( powerup );
     this.providePowerups();
@@ -37,7 +36,7 @@
     var total = this.availablePowerups.length,
       index = ( Math.random() * total ) << 0;
 
-    return this.availablePowerups[ index ] || false;
+    return this.availablePowerups[ index ];
   };
 
   App.PowerupManager.prototype.isActive = function( name ) {

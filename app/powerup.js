@@ -1,4 +1,5 @@
 (function() {
+
   App.Powerup = function( owner, name, attributes ) {
     attributes = App.Helpers.verifyAttributes( attributes );
 
@@ -6,11 +7,10 @@
     this.__game = this.__super.__super;
 
     this.name = name;
-    this.active = true;
     this.layer = this.__game.layers.common;
 
     var defaults = {
-      color: '#00f',
+      color: '#0f0',
       width: 20,
       height: 20,
       speed: 5,
@@ -21,7 +21,7 @@
 
     this.attributes = _.defaults( attributes, defaults );
 
-    this._calculateStartPosition();
+    this.reset();
   };
 
   App.Powerup.prototype = new App.CanvasObject();
@@ -40,9 +40,13 @@
     return this;
   };
 
-  App.Powerup.prototype._calculateStartPosition = function () {
-    this.attributes.x = ( 0 - this.attributes.width );
-    this.attributes.y = ( Math.random() * this.__game.attributes.height ) << 0;
+  App.Powerup.prototype.reset = function () {
+    this.active = true;
+    this.attributes.x = -this.attributes.width;
+    // Randomly along the height of the game minus twice the height of thr player
+    // r = gh - (2ph)
+    this.attributes.y = ( Math.random() * ( this.__game.attributes.height - (this.__game.player.attributes.height * 2) ) ) << 0;
+    return this;
   };
 
 }() );
