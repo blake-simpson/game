@@ -3,19 +3,21 @@
     attributes = App.Helpers.verifyAttributes( attributes );
 
     this.__super = owner;
+    this.__game = this.__super.__super;
+
     this.name = name;
     this.active = true;
-    this.layer = this.__super.layers.common;
+    this.layer = this.__game.layers.common;
 
     var defaults = {
       color: '#00f',
       width: 20,
       height: 20,
-      speed: 6,
-      duration: 8000,
+      speed: 5,
+      duration: 5000,
       x: 0,
       y: 0
-    }
+    };
 
     this.attributes = _.defaults( attributes, defaults );
 
@@ -25,8 +27,7 @@
   App.Powerup.prototype = new App.CanvasObject();
 
   App.Powerup.prototype.hit = function() {
-    this.__super.activePowerups[this.name] = true;
-    this.__super.clearPowerup( this.name, this.attributes.duration );
+    this.__super.activate( this );
     this.destroy();
   };
 
@@ -40,8 +41,8 @@
   };
 
   App.Powerup.prototype._calculateStartPosition = function () {
-    this.attributes.x -= this.attributes.width;
-    this.attributes.y = ( Math.random() * this.__super.attributes.height ) << 0;
+    this.attributes.x = ( 0 - this.attributes.width );
+    this.attributes.y = ( Math.random() * this.__game.attributes.height ) << 0;
   };
 
 }() );

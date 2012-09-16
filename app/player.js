@@ -59,7 +59,7 @@
     if (this.firing) { return false; }
 
     var bullet = new App.Bullet( this ),
-      delay = this.__super.activePowerups['rapidfire'] ? 65 : 130;
+      delay = this.__super.PowerupManager.isActive( 'rapidfire' ) ? 65 : 130;
 
     this.firing = true;
     this.__super.bullets.push( bullet );

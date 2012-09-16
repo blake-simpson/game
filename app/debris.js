@@ -1,8 +1,6 @@
 (function (){
   App.Debris = function( owner, attributes ) {
-    if ( !attributes || attributes === undefined ) {
-      attributes = {};
-    }
+    attributes = App.Helpers.verifyAttributes( attributes );
 
     this.__super = owner;
     this.layer = this.__super.layers.debris;
@@ -15,7 +13,6 @@
     };
 
     this.attributes = _.defaults( attributes, defaults );
-
     this.attributes.max_size = this.attributes.min_size + this.attributes.size;
 
     this.generateAttributes();
@@ -42,7 +39,7 @@
     if ( this.attributes.y > this.__super.attributes.height ) {
       this.attributes.y = this._calculateTopOffset();
     } else {
-      speed = this.__super.activePowerups['half_speed'] ? ~~(speed / 2) : speed;
+      speed = this.__super.PowerupManager.isActive( 'half_speed' ) ? ~~(speed / 2) : speed;
       this.attributes.y += (speed + delta);
     }
 

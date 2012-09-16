@@ -40,11 +40,6 @@
       debris: new App.Layer( this, 'debris' ),
       ui: new App.Layer( this, 'ui', {static: true} )
     };
-
-    this.availablePowerups = [
-      {name: 'rapidfire', options: {color: '#0f0'}},
-      {name: 'half_speed', options: {color: '#123456'}}
-    ];
   };
 
   App.Game.prototype.setup = function() {
@@ -52,7 +47,6 @@
     this.debris = [];
     this.powerups = [];
     this.activeKeys = [];
-    this.activePowerups = {};
     this.direction = false;
     this.active = true;
     this.delta = new Date();
@@ -64,6 +58,8 @@
     }
 
     this.UI = new App.UI( this );
+    this.PowerupManager = new App.PowerupManager( this );
+
     this.addDebris();
     this.applyControls();
   };
@@ -103,42 +99,15 @@
   App.Game.prototype.start = function() {
     this.setup();
     this.loop();
-    this.providePowerups();
   };
 
   App.Game.prototype.stop = function() {
     this.active = false;
-    clearInterval( this.powerupManager );
+    this.PowerupManager.stop();
   };
 
   App.Game.prototype.updateUI = function() {
     this.UI.update();
-  };
-
-  App.Game.prototype.providePowerups = function() {
-    this.powerupManager = setInterval( _.bind( this.addPowerup, this ), this.attributes.powerup_delay );
-  };
-
-  App.Game.prototype.addPowerup = function() {
-    var selected = this.choosePowerup();
-      powerup = new App.Powerup( this, selected.name, selected.options );
-
-    this.powerups.push( powerup );
-  };
-
-  App.Game.prototype.choosePowerup = function() {
-    var total = this.availablePowerups.length,
-      index = ( Math.random() * total ) << 0;
-
-    return this.availablePowerups[ index ] || false;
-  };
-
-  App.Game.prototype.clearPowerup = function( name, duration ) {
-    clearInterval( this.powerupManager );
-    setTimeout( _.bind( function() {
-      delete this.activePowerups[ name ];
-      this.providePowerups();
-    }, this ), duration );
   };
 
   App.Game.prototype.loop = function() {
