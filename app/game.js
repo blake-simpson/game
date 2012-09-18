@@ -118,9 +118,32 @@
     this.detectCollisions();
     this.updateUI();
 
+    // Haven't decided to have clouds or not. Looks good but performance hit.
     //this.layer.animate();
 
+    // Draw all bullets to the canvas
+    _.each( this.bullets, function( bullet, index ) {
+      if( (bullet.attributes.y + bullet.attributes.height) < 0 || !bullet.active ) {
+        this.cleanBullet( index );
+      } else {
+        bullet.draw().move();
+      }
+    }, this );
 
+    this.handlePlayer();
+
+    // Ask browser to detect next frame and recurse
+    // or fallback to setTimeout.
+    // requestAnimFrame() helper will return false when game is stopped.
+    if( this.active ) {
+      try {
+        frame = App.Helpers.requestAnimFrame();
+        frame( _.bind(this.loop, this) );
+      } catch( e ) {}
+    }
+  };
+
+  App.Game.prototype.handlePlayer = function() {
     // Handle direction controls
     if ( this.activeKeys.left ) {
       this.player.left();
@@ -135,25 +158,6 @@
 
     // Draw player to the canvas
     this.player.draw();
-
-    // Draw all bullets to the canvas
-    _.each( this.bullets, function( bullet, index ) {
-      if( (bullet.attributes.y + bullet.attributes.height) < 0 || !bullet.active ) {
-        this.cleanBullet( index );
-      } else {
-        bullet.draw().move();
-      }
-    }, this );
-
-    // Ask browser to detect next frame and recurse
-    // or fallback to setTimeout.
-    // requestAnimFrame() helper will return false when game is stopped.
-    if( this.active ) {
-      try {
-        frame = App.Helpers.requestAnimFrame();
-        frame( _.bind(this.loop, this) );
-      } catch( e ) {}
-    }
   };
 
   App.Game.prototype.clearLayers = function() {
